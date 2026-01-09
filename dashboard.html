@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Buku Saya</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    h1 {
+      color: #333;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.logout {
+      background: #f44336;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #f1f1f1;
+    }
+    .actions a {
+      margin-right: 10px;
+      text-decoration: none;
+      color: #2196F3;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: none;
+    }
+    .form-container input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .form-container button {
+      margin-top: 10px;
+      margin-right: 10px;
+    }
+    .empty {
+      text-align: center;
+      color: #777;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Selamat datang, <span id="username">User</span>!</h1>
+    <button class="logout" onclick="logout()">Logout</button>
+  </header>
+
+  <button onclick="showForm()">Tambah Buku Baru</button>
+
+  <div class="form-container" id="bookForm">
+    <h3 id="formTitle">Tambah Buku</h3>
+    <input type="hidden" id="bookId" />
+    <input type="text" id="title" placeholder="Judul Buku" />
+    <input type="text" id="author" placeholder="Penulis" />
+    <input type="number" id="year" placeholder="Tahun Terbit" />
+    <button onclick="saveBook()">Simpan</button>
+    <button onclick="hideForm()">Batal</button>
+  </div>
+
+  <div id="bookList">
+    <!-- Daftar buku akan dimuat di sini -->
+  </div>
+
+  <script>
+    let token = localStorage.getItem('token');
+    let username = localStorage.getItem('username');
+
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    document.getElementById('username').textContent = username;
+
+    async function apiFetch(url, options = {}) {
+      const headers = { 'Authorization': 'Bearer ' + token };
+      if (!options.headers) options.headers = {};
+      Object.assign(options.headers, headers);
+      return fetch(url, options);
+    }
+
+    async function loadBooks() {
+      try {
+        const res = await apiFetch('https://book-service-pied.vercel.app/books');
+        const books = await res.json();
+        const listDiv = document.getElementById('bookList');
+        if (books.length === 0) {
+          listDiv.innerHTML = '<p class="empty">Belum ada buku. Tambahkan buku pertama Anda!</p>';
+          return;
+        }
+        let html = `<table>
+          <thead><tr><th>Judul</th><th>Penulis</th><th>Tahun</th><th>Aksi</th></tr></thead>
+          <tbody>`;
+        books.forEach(book => {
+          html += `
+            <tr>
+              <td>${book.title}</td>
+              <td>${book.author}</td>
+              <td>${book.year}</td>
+              <td class="actions">
+                <a href="#" onclick="editBook(${book.id}, '${book.title}', '${book.author}', ${book.year})">Edit</a>
+                <a href="#" onclick="deleteBook(${book.id})" style="color:red;">Hapus</a>
+              </td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        listDiv.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        document.getElementById('bookList').innerHTML = '<p class="empty">Gagal memuat data.</p>';
+      }
+    }
+
+    function showForm() {
+      document.getElementById('formTitle').textContent = 'Tambah Buku';
+      document.getElementById('bookId').value = '';
+      document.getElementById('title').value = '';
+      document.getElementById('author').value = '';
+      document.getElementById('year').value = '';
+      document.getElementById('bookForm').style.display = 'block';
+    }
+
+    function hideForm() {
+      document.getElementById('bookForm').style.display = 'none';
+    }
+
+    function editBook(id, title, author, year) {
+      document.getElementById('formTitle').textContent = 'Edit Buku';
+      document.getElementById('bookId').value = id;
+      document.getElementById('title').value = title;
+      document.getElementById('author').value = author;
+      document.getElementById('year').value = year;
+      document.getElementById('bookForm').style.display = 'block';
+    }
+
+    async function saveBook() {
+      const id = document.getElementById('bookId').value;
+      const title = document.getElementById('title').value;
+      const author = document.getElementById('author').value;
+      const year = parseInt(document.getElementById('year').value);
+      if (!title || !author || !year) {
+        alert('Semua field wajib diisi');
+        return;
+      }
+
+      const payload = { title, author, year };
+      let res;
+
+      if (id) {
+        // Update
+        res = await apiFetch(`https://book-service-pied.vercel.app/books/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        // Create
+        res = await apiFetch('https://book-service-pied.vercel.app/books', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      if (res.ok) {
+        hideForm();
+        loadBooks();
+      } else {
+        alert('Gagal menyimpan buku');
+      }
+    }
+
+    async function deleteBook(id) {
+      if (!confirm('Yakin hapus buku ini?')) return;
+      const res = await apiFetch(`https://book-service-pied.vercel.app/books/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        loadBooks();
+      } else {
+        alert('Gagal menghapus buku');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      window.location.href = 'login.html';
+    }
+
+    // Muat data saat halaman dibuka
+    loadBooks();
+  </script>
+</body>
+</html>
