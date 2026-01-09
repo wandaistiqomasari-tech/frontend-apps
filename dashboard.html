@@ -1,119 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard - Buku Saya</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 20px;
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
     }
+
+    body {
+      margin: 0;
+      background: #f4f6fb;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
     header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 1.2rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    h1 {
+
+    header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    header span {
+      font-weight: 600;
+    }
+
+    header button {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    header button:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* MAIN */
+    main {
+      padding: 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .top-actions h2 {
+      margin: 0;
       color: #333;
+      font-size: 1.2rem;
+      font-weight: 600;
     }
-    button {
-      background: #4CAF50;
+
+    .add-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 5px;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    /* FORM */
+    .form-container {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      margin-bottom: 1.5rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-container h3 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 0.9rem;
+    }
+
+    .form-container input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+    }
+
+    .form-actions {
+      margin-top: 1rem;
+    }
+
+    .form-actions button {
+      margin-right: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: none;
       cursor: pointer;
     }
-    button.logout {
-      background: #f44336;
+
+    .save-btn {
+      background: #667eea;
+      color: white;
     }
+
+    .cancel-btn {
+      background: #eee;
+    }
+
+    /* TABLE */
+    .table-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      overflow-x: auto;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
     }
+
     th, td {
-      padding: 12px;
+      padding: 0.9rem 1rem;
       text-align: left;
-      border-bottom: 1px solid #ddd;
+      font-size: 0.9rem;
     }
+
     th {
-      background: #f1f1f1;
+      background: #f1f2f8;
+      color: #555;
+      font-weight: 600;
     }
+
+    tr:not(:last-child) td {
+      border-bottom: 1px solid #eee;
+    }
+
     .actions a {
-      margin-right: 10px;
+      margin-right: 0.6rem;
       text-decoration: none;
-      color: #2196F3;
+      font-size: 0.85rem;
+      font-weight: 500;
     }
-    .form-container {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      display: none;
+
+    .edit {
+      color: #667eea;
     }
-    .form-container input {
-      width: 100%;
-      padding: 8px;
-      margin: 5px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
+
+    .delete {
+      color: #e53935;
     }
-    .form-container button {
-      margin-top: 10px;
-      margin-right: 10px;
-    }
+
     .empty {
       text-align: center;
+      padding: 2rem;
       color: #777;
-      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
     }
   </style>
 </head>
 <body>
+
   <header>
-    <h1>Selamat datang, <span id="username">User</span>!</h1>
-    <button class="logout" onclick="logout()">Logout</button>
+    <h1>📚 Dashboard Buku — <span id="username">User</span></h1>
+    <button onclick="logout()">Logout</button>
   </header>
 
-  <button onclick="showForm()">Tambah Buku Baru</button>
+  <main>
+    <div class="top-actions">
+      <h2>Daftar Buku</h2>
+      <button class="add-btn" onclick="showForm()">+ Tambah Buku</button>
+    </div>
 
-  <div class="form-container" id="bookForm">
-    <h3 id="formTitle">Tambah Buku</h3>
-    <input type="hidden" id="bookId" />
-    <input type="text" id="title" placeholder="Judul Buku" />
-    <input type="text" id="author" placeholder="Penulis" />
-    <input type="number" id="year" placeholder="Tahun Terbit" />
-    <button onclick="saveBook()">Simpan</button>
-    <button onclick="hideForm()">Batal</button>
-  </div>
+    <div class="form-container" id="bookForm">
+      <h3 id="formTitle">Tambah Buku</h3>
+      <input type="hidden" id="bookId" />
+      <div class="form-grid">
+        <input type="text" id="title" placeholder="Judul Buku" />
+        <input type="text" id="author" placeholder="Penulis" />
+        <input type="number" id="year" placeholder="Tahun Terbit" />
+      </div>
+      <div class="form-actions">
+        <button class="save-btn" onclick="saveBook()">Simpan</button>
+        <button class="cancel-btn" onclick="hideForm()">Batal</button>
+      </div>
+    </div>
 
-  <div id="bookList">
-    <!-- Daftar buku akan dimuat di sini -->
-  </div>
+    <div id="bookList" class="table-container"></div>
+  </main>
 
   <script>
     let token = localStorage.getItem('token');
     let username = localStorage.getItem('username');
 
-    if (!token) {
-      window.location.href = 'login.html';
-    }
-
+    if (!token) window.location.href = 'index.html';
     document.getElementById('username').textContent = username;
 
     async function apiFetch(url, options = {}) {
-      const headers = { 'Authorization': 'Bearer ' + token };
-      if (!options.headers) options.headers = {};
-      Object.assign(options.headers, headers);
+      options.headers = {
+        ...options.headers,
+        Authorization: 'Bearer ' + token
+      };
       return fetch(url, options);
     }
 
@@ -122,30 +264,44 @@
         const res = await apiFetch('https://book-service-pied.vercel.app/books');
         const books = await res.json();
         const listDiv = document.getElementById('bookList');
-        if (books.length === 0) {
-          listDiv.innerHTML = '<p class="empty">Belum ada buku. Tambahkan buku pertama Anda!</p>';
+
+        if (!books.length) {
+          listDiv.innerHTML = '<div class="empty">Belum ada buku. Tambahkan buku pertama Anda 📘</div>';
           return;
         }
-        let html = `<table>
-          <thead><tr><th>Judul</th><th>Penulis</th><th>Tahun</th><th>Aksi</th></tr></thead>
-          <tbody>`;
-        books.forEach(book => {
+
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>Judul</th>
+                <th>Penulis</th>
+                <th>Tahun</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        books.forEach(b => {
           html += `
             <tr>
-              <td>${book.title}</td>
-              <td>${book.author}</td>
-              <td>${book.year}</td>
+              <td>${b.title}</td>
+              <td>${b.author}</td>
+              <td>${b.year}</td>
               <td class="actions">
-                <a href="#" onclick="editBook(${book.id}, '${book.title}', '${book.author}', ${book.year})">Edit</a>
-                <a href="#" onclick="deleteBook(${book.id})" style="color:red;">Hapus</a>
+                <a href="#" class="edit" onclick="editBook(${b.id}, '${b.title}', '${b.author}', ${b.year})">Edit</a>
+                <a href="#" class="delete" onclick="deleteBook(${b.id})">Hapus</a>
               </td>
-            </tr>`;
+            </tr>
+          `;
         });
+
         html += '</tbody></table>';
         listDiv.innerHTML = html;
-      } catch (err) {
-        console.error(err);
-        document.getElementById('bookList').innerHTML = '<p class="empty">Gagal memuat data.</p>';
+      } catch {
+        document.getElementById('bookList').innerHTML =
+          '<div class="empty">Gagal memuat data</div>';
       }
     }
 
@@ -176,29 +332,25 @@
       const title = document.getElementById('title').value;
       const author = document.getElementById('author').value;
       const year = parseInt(document.getElementById('year').value);
+
       if (!title || !author || !year) {
         alert('Semua field wajib diisi');
         return;
       }
 
       const payload = { title, author, year };
-      let res;
 
-      if (id) {
-        // Update
-        res = await apiFetch(`https://book-service-pied.vercel.app/books/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } else {
-        // Create
-        res = await apiFetch('https://book-service-pied.vercel.app/books', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      }
+      const url = id
+        ? `https://book-service-pied.vercel.app/books/${id}`
+        : 'https://book-service-pied.vercel.app/books';
+
+      const method = id ? 'PUT' : 'POST';
+
+      const res = await apiFetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
       if (res.ok) {
         hideForm();
@@ -210,21 +362,19 @@
 
     async function deleteBook(id) {
       if (!confirm('Yakin hapus buku ini?')) return;
-      const res = await apiFetch(`https://book-service-pied.vercel.app/books/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        loadBooks();
-      } else {
-        alert('Gagal menghapus buku');
-      }
+      const res = await apiFetch(
+        `https://book-service-pied.vercel.app/books/${id}`,
+        { method: 'DELETE' }
+      );
+      if (res.ok) loadBooks();
+      else alert('Gagal menghapus buku');
     }
 
     function logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
+      localStorage.clear();
       window.location.href = 'login.html';
     }
 
-    // Muat data saat halaman dibuka
     loadBooks();
   </script>
 </body>

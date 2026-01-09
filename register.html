@@ -1,74 +1,172 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Register - Sistem Buku</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
+      margin: 0;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
     }
+
     .card {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 350px;
+      background: #ffffff;
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      width: 360px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.6s ease;
     }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.4rem;
       color: #333;
+      font-weight: 600;
     }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      margin-bottom: 1.8rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: #555;
+      margin-bottom: 0.3rem;
+    }
+
     input {
       width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 8px;
       border: 1px solid #ddd;
-      border-radius: 5px;
-      box-sizing: border-box;
+      outline: none;
+      transition: all 0.3s;
+      font-size: 0.9rem;
     }
+
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
     button {
       width: 100%;
       padding: 0.75rem;
-      background: #2196F3;
-      color: white;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      border-radius: 8px;
+      color: white;
       font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
+
     button:hover {
-      background: #1976D2;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
     .link {
+      margin-top: 1.3rem;
       text-align: center;
-      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #555;
     }
+
     .link a {
-      color: #4CAF50;
+      color: #667eea;
       text-decoration: none;
+      font-weight: 500;
     }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+
     .error {
-      color: red;
+      background: #ffe5e5;
+      color: #c62828;
+      padding: 0.6rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
       text-align: center;
       margin-bottom: 1rem;
+      display: none;
+    }
+
+    .success {
+      background: #e6f4ea;
+      color: #2e7d32;
+      padding: 0.6rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      display: none;
     }
   </style>
 </head>
 <body>
+
   <div class="card">
     <h2>Daftar Akun</h2>
+    <div class="subtitle">Buat akun baru Sistem Buku</div>
+
     <div id="error" class="error"></div>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
+    <div id="success" class="success"></div>
+
+    <div class="input-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Masukkan username">
+    </div>
+
+    <div class="input-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Masukkan password">
+    </div>
+
     <button onclick="register()">Daftar</button>
+
     <div class="link">
       Sudah punya akun? <a href="index.html">Login</a>
     </div>
@@ -76,12 +174,23 @@
 
   <script>
     async function register() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
       const errorDiv = document.getElementById('error');
+      const successDiv = document.getElementById('success');
+
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
 
       if (!username || !password) {
         errorDiv.textContent = 'Username dan password wajib diisi';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (password.length < 6) {
+        errorDiv.textContent = 'Password minimal 6 karakter';
+        errorDiv.style.display = 'block';
         return;
       }
 
@@ -95,15 +204,22 @@
         const data = await res.json();
 
         if (res.ok) {
-          alert('Registrasi berhasil! Silakan login.');
-          window.location.href = 'index.html';
+          successDiv.textContent = 'Registrasi berhasil! Mengalihkan ke login...';
+          successDiv.style.display = 'block';
+
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
         } else {
           errorDiv.textContent = data.error || 'Registrasi gagal';
+          errorDiv.style.display = 'block';
         }
       } catch (err) {
         errorDiv.textContent = 'Kesalahan jaringan';
+        errorDiv.style.display = 'block';
       }
     }
   </script>
+
 </body>
 </html>
