@@ -248,7 +248,7 @@
     let token = localStorage.getItem('token');
     let username = localStorage.getItem('username');
 
-    if (!token) window.location.href = '';
+    if (!token) window.location.href = 'index.html';
     document.getElementById('username').textContent = username;
 
     async function apiFetch(url, options = {}) {
@@ -372,7 +372,7 @@
 
     function logout() {
       localStorage.clear();
-      window.location.href = 'login.html';
+      window.location.href = '';
     }
 
     loadBooks();
