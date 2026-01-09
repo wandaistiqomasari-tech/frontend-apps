@@ -248,7 +248,7 @@
     let token = localStorage.getItem('token');
     let username = localStorage.getItem('username');
 
-    if (!token) window.location.href = 'index.html';
+    if (!token) window.location.href = '';
     document.getElementById('username').textContent = username;
 
     async function apiFetch(url, options = {}) {
